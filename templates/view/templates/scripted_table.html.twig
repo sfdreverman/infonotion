@@ -1,0 +1,22 @@
+{% include 'view/templates/bare_table.html.twig'%}
+
+<script>
+		var timeout = null;
+		function updateSearchString(e) {		
+				clearTimeout(timeout);
+				timeout = setTimeout(function () {
+					showView("{{ domain }}","{{ metaType }}",'empty',e.target.getAttribute('data-inid'),"newtable",0,e.target.value);
+				}, 250);			
+			}	
+				
+		function TableClick(myobj, domain, name, instID, viewID,divID)
+		{
+			$(myobj).closest('table').find('td').not(this).removeClass('selected');      
+			$(myobj).closest('table').find('label').not(this).removeClass('selected'); 
+			$(myobj).parent().siblings().removeClass('highlight');
+			$(myobj).parent().toggleClass('highlight');
+			$(myobj).toggleClass('selected');
+			showView(domain, name,instID,viewID,divID,0,"");
+		}
+		
+</script>

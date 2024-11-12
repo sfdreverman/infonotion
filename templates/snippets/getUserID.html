@@ -1,0 +1,17 @@
+				function getUserID()
+				{
+					var answer= '';
+					$('#User_ID .active').each(function(){
+						answer= $(this).attr('id'); 
+					}); 
+					return answer;
+				}
+				
+				function getUserName()
+				{
+					var answer= '';
+					$('#User_ID .active').each(function(){
+						answer= $(this)[0].innerText;
+					}); 
+					return answer;
+				}

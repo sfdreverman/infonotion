@@ -1,0 +1,35 @@
+{% extends 'base.html.twig' %}
+{% block sidebar %}
+	<a class="btn btn-primary btn-block" href="/databrowser/"><<</a><br>
+	{{ ViewContent|raw }}
+	<br> <br>
+	<div class="panel text-center">
+	<a class="btn btn-primary topmargin" href="/frameN/metaeditor/{{ domain }}/{{ metaType }}">Edit Model</a>
+	</div>
+{% endblock %}
+
+{% block mybody %}
+
+	<div class="row">
+		<div class="col-md-6 nopadding">
+			<div class="panel panel-default">
+				<div id="newtable" class="panel panel-default noborder"></div>				
+			</div>	
+
+		</div>
+		<div class="col-md-5">
+			<div class="panel panel-default">
+				<div id="details" class="panel panel-default noborder"></div>				
+			</div>						
+		</div>
+	</div>
+	
+    <script>	
+			{% include 'snippets/showView.html' %}
+			
+			{% set loadElementId = metaType %}
+			
+			{% include 'snippets/windowOnLoad.Entity.html' %}
+    </script>	
+
+{% endblock %}

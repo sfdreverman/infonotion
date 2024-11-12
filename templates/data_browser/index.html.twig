@@ -1,0 +1,24 @@
+{% extends 'base.html.twig' %}
+
+{% block sidebar %}
+	Data browser<br>
+	<div class="btn-group-vertical">	
+		<a class="btn btn-primary" href="/"><<</a>
+	</div>
+	<br>
+	Domains<br>
+	<div class="btn-group-vertical">	
+	{% for item in domains %} 
+		<a class="btn btn-primary" href="frameN/databrowser/{{ item['m']['name'] }}">{{ item['m']['name'] }}</a>
+	{% endfor %}	
+	</div>	
+	<br>
+{% endblock %}
+
+{% block mybody %}
+	{% include 'default/pocinfo.html' %}
+{% endblock %}
+
+{% block stylesheets %}
+
+{% endblock %}

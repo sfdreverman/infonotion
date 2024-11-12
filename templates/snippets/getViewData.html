@@ -1,0 +1,135 @@
+			{% include 'snippets/nl2br.html' %}
+			
+			function isIn(needle, arrhaystack)
+			{
+				return (arrhaystack.indexOf(needle) > -1);
+			}
+
+			function getViewData(queryID, givenvtid,viewName)
+			{
+				var tab = $("div#"+viewName)[0];
+				tab.innerHTML = queryID;
+				var t = $("tbody#"+viewName+"querydata").empty();
+				var r = $("thead#"+viewName+"queryheaders").empty();				
+				var vtid = givenvtid;
+				if (vtid=="") { var vtid = $('#selids label.active').prop('id'); }
+				if (queryID=="") { queryID = 'null'; }
+				var theadersid = "'"+viewName+"TR'";
+				
+                $.get('/getviewdata/'+queryID+'/'+vtid,
+                    function (data) {
+						console.log(data);
+                        if (data.length == 0)
+						{   $("<p> Empty result ... Check  Query with ID ("+queryID+")</p>").appendTo(t);
+							return;
+						}
+						
+						var cols = [];
+						var colids = [];
+						var colid = -1;
+						Object.keys(data).forEach(function (item) {
+							var result = data[item];
+			
+							if (!(item == 'values')) {
+								var appstr = "<th scope='row'>#</th>";
+								appstr = "";
+								
+								$.each(result, function(key, value) {
+									if (value.endsWith('_INID')) {
+										colid=value
+										//colids[key]=-2;
+									} else
+									if (value == "Columns")
+									{	//Dirty way of adding column numbering... sorry :-)
+										for(var i = 1; i <= data['values'][0].Columns.length; i++)
+										{
+											appstr = appstr + "<th class='strong caption'>"+ i +"</th>";
+										}
+										cols[key] = value;
+										colids[key]=-1;										
+									} else
+									{
+										cols[key] = value;
+										colids[value] = colid; colid= -1;
+										appstr = appstr + "<th class='strong caption'>"+ value +"</th>";
+									}
+								});
+								var idstr = "id="+theadersid; 								
+								$("<tr "+idstr+">"+ appstr +"</tr>").appendTo(r);
+							} else {
+								var counter = 1;
+								console.log(cols, colids);
+								$.each(result, function(key, value) {
+									var appstr = "<th scope='row'>"+ counter +"</th>";
+									appstr = "";
+									counter = counter + 1;
+									$.each(value, function(key2, value2) {
+										if ($.inArray(String(key2),cols)>-1)
+										{
+											if (key2=='Columns') {
+												var resultstr = '';
+												var curordr = 1;
+												var itemurl = '';
+												
+												$.each(value2, function (key3,value3) {
+													var ordr = value3['order'];
+													while (curordr<ordr) { 
+														resultstr = resultstr + '<td>-</td>'; 
+														curordr++;
+													}	
+													resultstr = resultstr + '<td>' + value3['value'] + '</td>';
+													curordr++;
+												});
+												appstr = appstr + resultstr;	
+											} else 
+											{
+												if (key2=='Topics') {
+													var resultstr = '';
+													var first = '';
+													var itemurl = '';
+													
+													$.each(value2, function (key3,value3) {
+														var s = "'"+value3['inid']+"'";
+														var idstr = "id="+s; 
+														var mt = "'"+value3['label']+"'";	
+														var datastr = "data-otype="+mt;
+													
+														itemurl = '"/'+value3['domain']+'/'+value3['label']+'/'+value3['inid']+'/"';
+														itemurl = "TableClick(this,"+s+","+mt+")";
+														
+														var tween = '"'+itemurl+'"';
+														resultstr = resultstr + first + '<label class="btn btn-sm ftnorm" onClick="'+tween+'" '+datastr+'>' + value3['name'] + '</label>';
+														if (first=='') {first=', ';}
+													});
+													value2=resultstr;
+												} else
+												{													
+													idstr = ''; clickstr='';
+													datastr= '';
+														if (!key2.endsWith('_INID')) { 
+															var s = "'"+value[colids[key2]]+"'";
+															idstr = "id="+s; 
+															var mt = "'"+key2+"'";
+															clickstr = "onClick=\"TableClick(this,"+s+","+mt+")\"";
+															datastr = "data-otype="+mt;
+														}
+												}
+												if (isIn(key2.toUpperCase(),['DATUM','DATE','DATETIME','AANMAAKDATUM'])) 
+													{value2 = formatJSONDate(value2)}
+												if (isIn(key2.toUpperCase(),['TIME','TIJD'])) 
+													{	
+														if (value2>0) {value2 = formatIntTime(value2)} else value2 = '-';
+													}
+												if (colids[key2] !== undefined ){
+												appstr = appstr + "<td "+clickstr+" "+idstr+" "+datastr+">" + nl2br(value2) + "</td>";
+												}
+											}
+										}
+									});
+									$("<tr>"+ appstr +"</tr>").appendTo(t);
+								});
+							}
+						})
+                    }, "json");
+                return false;				
+			}

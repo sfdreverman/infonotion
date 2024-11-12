@@ -1,0 +1,40 @@
+				<div class="input-group" hidden>
+					<span class="input-group-addon">Name</span>
+					<input class="form-control" type="text" name="dummy1" value="Name" readonly>
+					<span class="input-group-addon">Type</span>
+					<input class="form-control" type="text" name="dummy2" value="text" readonly>
+				</div>
+				<div class="input-group" hidden>
+					<span class="input-group-addon">Name</span>
+					<input class="form-control" type="text" name="dummy3" value="Description" readonly>
+					<span class="input-group-addon">Type</span>
+					<input class="form-control" type="text" name="dummy4" value="text" readonly>
+				</div><br>
+
+                		/*
+		$counter = 0;
+		$first = true;
+		$checkcols = false;
+		$cn = -1;
+	    foreach ($result->records() as $record) {	
+			//print_r($record);
+			if ($first)
+			{
+				$queryData['keys'] = $record->keys();
+				$first=false;
+				if (in_array('Columns', $queryData['keys'])) 
+					{	$checkcols = true;
+						$cn = array_search('Columns', $queryData['keys']);
+						$max_value = max($record->values()[$cn]);
+						for ($i=1;$i<=$max_value['order'];$i=$i+1)
+						{
+							$queryData['keys'][]="".$i."";
+						}
+					}
+			}
+			$queryData['values'][$counter] = $record->values();
+			$counter += 1;
+			//print_r($record->values());
+		}
+		return $queryData;*/
+		//dump($queryData);
