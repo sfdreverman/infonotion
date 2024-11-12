@@ -1,0 +1,48 @@
+{% extends 'base.html.twig' %}
+{% block sidebar %}
+	<a class="btn btn-primary btn-block" href="/frameN/databrowser/{{ domain }}/{{ metaType }}"><<</a><br>
+	{{ ViewContent|raw }}			
+	<br> <br>
+	<a class="btn btn-primary btn-sm" href="/dataeditor/addtype/{{ domain }}">Add</a>
+	<a class="btn btn-primary btn-sm pull-right" id="deletetype" onclick="metaeditdeltypebuttonclick('{{domain}}')">Remove</a>
+
+
+{% endblock %}
+
+{% block mybody %}
+
+	<div class="row">
+		<div class="col-md-6 nopadding">
+			<div class="panel panel-default">
+				<div id="newtable" class="panel panel-default noborder"></div>	
+			</div>	
+
+		</div>
+		<div class="col-md-5">
+			<div class="panel panel-default">
+				<div id="details" class="panel panel-default noborder"></div>				
+			</div>						
+		</div>
+	</div>
+	
+    <script>	
+
+    	function metaeditdeltypebuttonclick(domain) {
+			var elm = document.getElementById('buttongroup').getElementsByClassName('active')[0].id;
+			console.log('/metaeditor/deletetype/'+domain+'/'+elm);
+			$.ajax({type: "POST",
+					url: "/metaeditor/deletetype/"+domain+"/"+elm,
+					success: function() {   
+						location.reload();  
+					}
+				});
+    	}
+
+		{% include 'snippets/showView.html' %}
+		
+		{% set loadElementId = metaType %}
+		
+		{% include 'snippets/windowOnLoad.Entity.html' %}
+    </script>	
+
+{% endblock %}

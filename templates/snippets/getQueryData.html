@@ -1,0 +1,82 @@
+			{% include 'snippets/nl2br.html' %}
+			
+			function isIn(needle, arrhaystack)
+			{
+				return (arrhaystack.indexOf(needle) > -1);
+			}
+			
+			function unfoldProps(obj) {
+				var res = '';
+				if (!obj || obj.length == 0) return res;
+				Object.keys(obj).forEach(function (objitem){
+					res = res.concat('['+objitem + ': ').concat(obj[objitem]+']');
+
+				});
+				return res;
+			}
+			
+			function timeConverter(UNIX_timestamp){
+				  var a = new Date(UNIX_timestamp * 1000);
+				  var months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+				  var year = a.getFullYear();
+				  var month = months[a.getMonth()];
+				  var date = a.getDate();
+				  var hour = a.getHours();
+				  var min = (a.getMinutes()<10?'0':'') + a.getMinutes();
+				  var sec = (a.getSeconds()<10?'0':'') + a.getSeconds();
+				  var time = date + ' ' + month + ' ' + year + ' ' + hour + ':' + min + ':' + sec ;
+				return time;
+			}
+
+			function getQueryData(queryID, givenvtid,queryheadersString,querydataString)
+			{
+
+				var t = $("tbody#"+querydataString).empty();
+				var r = $("thead#"+queryheadersString).empty();
+				var vtid = givenvtid;
+				if (vtid=="") { var vtid = $('#selids label.active').prop('id'); }
+				
+                $.get('/getquerydata/'+queryID+'/'+vtid,
+                    function (data) {
+                        if (!data || data.length == 0) return;						
+						var yAxisMatch = -1;
+						var xAxisMatch = -1;
+						Object.keys(data).forEach(function (item) {
+							var result = data[item];
+							var counter = 0;
+							var ySearchLabel = window.myLine.config.options.scales.yAxes["0"].scaleLabel.labelString;
+							var xSearchLabel = window.myLine.config.options.scales.xAxes["0"].scaleLabel.labelString;
+							
+							if (!(item == 'values')) {
+								var appstr = "<th scope='row'>#</th>";
+								$.each(result, function(key, value) {
+									counter = counter + 1;
+									appstr = appstr + "<th>"+ value +"</th>";
+									if (value == ySearchLabel) {yAxisMatch = counter-1;}
+									if (value == xSearchLabel) {xAxisMatch = counter-1;}
+								});
+								$("<tr>"+ appstr +"</tr>").appendTo(r);
+							} else {
+								var counter = 1;
+								window.myLine.config.data.labels = [];
+								window.myLine.config.data.datasets[0].data = [];
+								$.each(result, function(key, value) {
+									var appstr = "<th scope='row'>"+ counter +"</th>";
+									if (xAxisMatch==-1) {window.myLine.config.data.labels.push(counter);}
+									counter = counter + 1;
+
+									$.each(value, function(key2, value2) {
+										appstr = appstr + "<td>" + nl2br(value2) + "</td>";
+										if (key2 == yAxisMatch) { window.myLine.config.data.datasets[0].data.push(value2) }
+										if (key2 == xAxisMatch) { window.myLine.config.data.labels.push(timeConverter(value2)); }
+
+										
+									});
+									$("<tr>"+ appstr +"</tr>").appendTo(t);
+								});
+							}
+						})
+					window.myLine.update();
+                    }, "json");
+                return false;				
+			}

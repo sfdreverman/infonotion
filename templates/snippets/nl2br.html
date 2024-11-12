@@ -1,0 +1,15 @@
+function nl2br (str, is_xhtml) {
+    var breakTag = (is_xhtml || typeof is_xhtml === 'undefined') ? '<br />' : '<br>';
+    return (str + '').replace(/([^>\r\n]?)(\r\n|\n\r|\r|\n)/g, '$1' + breakTag + '$2');
+}
+
+function formatJSONDate(dateStr) {
+	var msgdate = new Date(dateStr);
+	return ("0" + msgdate.getDate()).slice(-2) + "-" + ("0"+(msgdate.getMonth()+1)).slice(-2) + "-" +
+		msgdate.getFullYear() + " " + ("0" + msgdate.getHours()).slice(-2) + ":" + ("0" + msgdate.getMinutes()).slice(-2);
+}
+
+function formatIntTime(timeStr) {
+	var msgdate = new Date(timeStr);
+	return ("0" + msgdate.getHours()).slice(-2) + ":" + ("0" + msgdate.getMinutes()).slice(-2) + ":" + ("0" + msgdate.getSeconds()).slice(-2)+ "." + ("0" + msgdate.getMilliseconds()).slice(-2);
+}

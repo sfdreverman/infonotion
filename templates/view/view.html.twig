@@ -1,0 +1,112 @@
+{% extends 'base.html.twig' %}
+
+{% block sidebar %}
+
+{% endblock %}
+
+{% block mybody %}
+	<div class="row">
+		<div id="leftpanel" class="col-md-5 rpadding">
+			<div class="panel panel-default">
+				<div role="navigation" id="PrevQueryName" class="panel-heading"  onClick="panelClick('left')">
+				<strong>List of </strong>
+				</div>
+			</div>			
+			<div class="panel panel-default">
+				<div hidden id="Prev"></div>
+				<table id="Prev" class="table table-striped table-hover">
+					<thead id="Prevqueryheaders">		
+					</thead>
+					<tbody id="Prevquerydata">		
+					</tbody>
+				</table>			
+			</div>					
+		</div>	
+		<div id="middlepanel" class="col-md-4 rpadding">
+			<div class="panel panel-default">
+				<div id="details" class="panel panel-default noborder" onClick="panelClick('middle')"></div>
+				</table>
+			</div>
+		</div>		
+		<div id="rightpanel" class="col-md-3 rpadding">
+			<div role="navigation" class="well min75" onClick="panelClick('right')">
+				<div hidden id="CurrentLabel"></div>
+				<div class="btn-group-horizontal" id="QueryBtnGroup" data-toggle="buttons">	
+
+				</div>
+			</div>
+			<div class="panel panel-default">
+				<div hidden id="Curr"></div>
+				<table id="Curr" class="table table-striped table-hover">
+					<thead id="Currqueryheaders">		
+					</thead>
+					<tbody id="Currquerydata">		
+					</tbody>
+				</table>
+			</div>
+		</div>	
+	</div>
+
+	
+    <script>
+	
+		function moveTable(from, to) {
+			var fromData = $("tbody#"+from+"querydata");
+			var fromHeaders = $("thead#"+from+"queryheaders");
+			var toData = $("tbody#"+to+"querydata");
+			var toHeaders = $("thead#"+to+"queryheaders");
+			toData.empty();
+			toHeaders.empty();
+			while (fromData[0].childNodes.length > 0) {
+				toData[0].appendChild(fromData[0].childNodes[0]);
+			}
+			while (fromHeaders[0].childNodes.length > 0) {
+				toHeaders[0].appendChild(fromHeaders[0].childNodes[0]);
+			}			
+			
+		}
+		
+		// Clicks in Table cells
+		
+	    function TableClick(myobj, id, mtype){
+			var tabname = $(myobj).closest('table')[0].id;
+			$(myobj).closest('table').find('td').not(this).removeClass('selected');      
+			$(myobj).closest('table').find('label').not(this).removeClass('selected'); 
+			$(myobj).toggleClass('selected');
+			
+			if (tabname=="Curr") {
+				moveTable("Curr","Prev");
+				elem = $('#PrevQueryName')[0];
+				qname = $('#QueryBtnGroup label.active')[0].innerText;
+				elem.innerHTML = '<strong>'+qname+ '</strong> ' + document.getElementById('ItemName').innerHTML;
+			}
+			
+			showView('{{domain}}',mtype, id, 'View5d9057b5b1c4f3.27505652','details',0);
+			// load currentID = id
+
+			var qid = $('#QueryBtnGroup label.active').prop('id');
+			if (!qid || qid == "") return;
+			
+			getViewData(qid, id,"Curr");				
+		}		
+		
+		function showCurrQuery(qid)
+		{
+			var elem = document.getElementById('instanceId');
+			var s = elem.innerHTML;
+			getViewData(qid, s,"Curr");
+		}
+	
+			{% include 'snippets/panelclick.html' %}
+	
+			{% include 'snippets/showView.html' %}
+
+			{% include 'snippets/getViewData.html' %}
+
+			{% include 'snippets/getQueries.html' %}
+			
+			{% include 'snippets/windowOnLoad.Entity.html' %}
+    </script>	
+
+
+{% endblock %}

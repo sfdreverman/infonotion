@@ -1,0 +1,34 @@
+
+			function getQueries(metaType,entityId)
+			{
+				var domain = $("div#domainLabel")[0].innerHTML;
+				var currdl = $("div#CurrentLabel")[0].innerHTML;
+				if (currdl != domain+metaType)
+				{	
+					$("div#CurrentLabel")[0].innerHTML = domain+metaType;
+					var t = $("#QueryBtnGroup").empty();
+					var act = 'active';
+					$.get('/getqueries/'+domain+'/'+metaType,
+						function (data) {
+							if (!data || data.length == 0) return;						
+							var currentlabel = "";
+							var firstQid = "";
+							Object.keys(data).forEach(function (item) {
+								var result = data[item];
+								if (currentlabel != result['grouplabel']){
+									currentlabel = result['grouplabel'];
+									$('<label class="wrap pull-left">'+currentlabel+'</label>').appendTo(t);
+								}
+								qid = result['in_id'];
+								name = result['name'];
+								if (firstQid=="") {firstQid=qid;}
+								iid = "showCurrQuery('"+qid+"');";
+								var appstr = '<label class="btn btn-primary wrap pull-left '+act+'" name="'+name+'" id="'+qid+'" onclick="'+iid+'"><input type="radio" name="queryoptions">'+result["name"]+'</input></label>';
+								$( appstr ).appendTo(t);
+								act = "";
+							})
+							getViewData(firstQid, entityId,"Curr");
+						}, "json");
+				}
+                return;				
+			}
