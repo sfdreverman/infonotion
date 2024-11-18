@@ -431,6 +431,9 @@ class NeoService
 		return $queries;
 	}
 
+
+// Migrate to ViewController
+
 	// Get Frame by ID
 	public function getFrame($instanceID)
 	{
@@ -448,19 +451,11 @@ class NeoService
 		$param=strtolower($param);
 		$result = $this->QueryToArr($query, ['param' => $param]);
 		$res = [];
-		dump($query,$param);
+		//dump($query,$param);
 		$res['frame']  = $result[0]['f'];		
 		$res['view'] = $result[0]['v'];	
 		return $res;
 	}	
-
-	// Get Domains (for navtree)
-	public function get_domains($navTreeName)
-	{
-		$query = 'MATCH (n:DomainNavTree)-[:hasDomain]->(m:Domain) WHERE n.name=$navTreeName RETURN m';
-		$result = $this->QueryToArr($query,['navTreeName' => $navTreeName]);
-		return $result;
-	}
 
 	public function getView($instanceID)
 	{
@@ -469,6 +464,17 @@ class NeoService
 		$res = [];
 		$res['view']  = $result[0]['v'];	
 		return $res;
+	}
+
+
+//
+
+	// Get Domains (for navtree)
+	public function get_domains($navTreeName)
+	{
+		$query = 'MATCH (n:DomainNavTree)-[:hasDomain]->(m:Domain) WHERE n.name=$navTreeName RETURN m';
+		$result = $this->QueryToArr($query,['navTreeName' => $navTreeName]);
+		return $result;
 	}
 
 }

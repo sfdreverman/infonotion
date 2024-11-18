@@ -2,7 +2,12 @@
 			{
 				var answerID = document.getElementById("AnswerID");
 				var answText = '';
-				if (answerID != null){ answText = '/'+answerID.innerHTML; }
+				if (answerID != null){ 
+					answText = '/'+answerID.innerHTML; 
+					var toData = $("div#Prev");
+					var itnam = document.getElementById("ItemName");
+					toData.append(itnam.innerHTML+' - '+document.getElementById(answerID.innerHTML).innerHTML+'<br><br>');					
+				}
 			
 				$.get('/j_getnextquestion/'+respondentID+'/'+LoQID + answText,
                     function (data) {						
@@ -10,7 +15,7 @@
 							$(data['response']).innerHTML="";
 							return
 						} 
-						
+
 						var t = $("div#"+divpanelID).empty();
 						$(data['response']).appendTo(t);
 						panelClick('right');

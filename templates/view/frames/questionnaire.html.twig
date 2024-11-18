@@ -25,13 +25,25 @@
 			</div>			
 			<div><br></div>
 			<div role="navigation" id="RespondentInfoHeader" class="panel-heading"  onClick="panelClick('left')">
-			<strong>Respondent information</strong>
+				<strong>Respondent information</strong>
 			</div>
 			<div class="panel panel-default">
-				<div id="RespondentInformation" class="panel panel-default noborder">
-				  
-				</div>				
+				<div class="well">
+					<div id="RespondentInformation" class="panel panel-default noborder">
+					
+					</div>				
+				</div>
+			</div>		
+
+			<div role="navigation" id="RespondentInfoHeader" class="panel-heading"  onClick="panelClick('left')">
+				<strong>Respondent answers given so far</strong>
 			</div>					
+			<div class="panel panel-default">
+				<div class="well">
+					<div id="Prev" class="panel panel-default noborder">
+					</div>
+				</div>
+			</div>	
 		</div>	
 		<div id="rightpanel" class="col-md-3 rpadding">
 			<div class="panel panel-default"  onClick="panelClick('right')">
@@ -53,31 +65,44 @@
 		  } else
 		  {
 			// Disable the button
+			document.getElementById("RespondentSubmit").remove();
+			document.forms["Respondent"]["RespondentName"].disabled=true;
 			
 		    // get respondent information (if any)
 			$.get('/j_getRespondentInfo/'+inpObj.value+'/{{instanceID}}',
-                    function (data) {						
+                    function (data) {	
+						console.log(data);
                         if (!data || data.length == 0) {
 							document.getElementById("RespondentInformation").innerHTML = '<p>Sorry, we could not find your name in our database.</p>';
 							return;
 						}
-						
+						console.log(data);
 						// Paste it in RespondentInformation div
-						var welcometext = 'Welcome,'+data[0]['RespondentName']+'. <br><br>You are about to answer a Questionnaire.<br>';
-						if (data[0]['QuestionsAnswered']===0)
+						var welcometext = 'Welcome, '+data[0]['RespondentName']+'. <br><br>You are about to answer a Questionnaire.<br>';
+						if (data[0]['Answer'] == null)
 						{
 							welcometext = welcometext+'We see that you have not answered any questions yet. So lets started right away!<br>';
 						}
 						else
 						{
-							if (data[0]['QuestionsAnswered']==data[0]['TotalQuestions'])
+							if (data[data.length-1]['Answer'] != null)
 							{
-								welcometext = welcometext+'<br>... or are you?!?!<br>   I see that you have already answered all the questions, so you are done!<br>'
+								welcometext = welcometext+'<br>... or are you?!?!<br>   You have already answered all the questions, so you are done!<br>'
 							}
 							else{
-								welcometext = welcometext+'We see that you have already answered '+data[0]['QuestionsAnswered']+' questions. So lets finish it!<br>'
+								welcometext = welcometext+'We see that you have already answered some questions. So lets finish it!<br>'
 							}
 						}
+
+						var toData = $("div#Prev");
+						var first = true;
+						$.each(data, function (key, item) {
+							if (item['Answer'] != null)
+							{
+								toData.append('Question '+(key+1)+'<br>'+item['Question']+' - '+item['Answer']+'<br><br>');	
+							}
+						});
+						
 						
 						welcometext = welcometext+'<br>Your ID is: '+data[0]['RespondentID']+'<br>'
 						document.getElementById("RespondentInformation").innerHTML = '<p>'+welcometext+'</p>';
@@ -88,15 +113,6 @@
                     }, "json");			
 		    }
 		}
-	
-		function moveTable(from, to) {
-			var fromData = $("div#Curr_NOCLICK");
-			var toData = $("div#Prev");
-			toData.empty();
-			toData[0].innerHTML=fromData[0].innerHTML;
-			fromData[0].innerHTML="";
-		}
-			
 	
 			{% include 'snippets/panelclick.html' %}
 	

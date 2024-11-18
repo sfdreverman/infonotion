@@ -35,8 +35,9 @@ class QuestionController extends AbstractController
 	 #[Route('/j_getRespondentInfo/{RespondentName}/{LoQID}', name: 'respondent_info')]	 
     public function getRespondentInfo(Request $request, $RespondentName, $LoQID)
 	{
-		$query = 'MATCH (q:Question)<-[:contains]-(loq:ListOfQuestions) where loq.in_id=$LoQID WITH loq,q,count(q) as TotalQuestions MATCH (r:Respondent) where r.name=$RespondentName OPTIONAL MATCH (r)-[rw:respondedWith]->(a:Answer)-[:isAnswerTo]->(q) return r.in_id as RespondentID, r.name as RespondentName ,count(rw) as QuestionsAnswered, count(q) as TotalQuestions';
+		$query = 'MATCH (q:Question)<-[:contains]-(loq:ListOfQuestions) where loq.in_id=$LoQID WITH loq,q MATCH (r:Respondent) where r.name=$RespondentName OPTIONAL MATCH (r)-[rw:respondedWith]->(a:Answer)-[:isAnswerTo]->(q) return r.in_id as RespondentID, r.name as RespondentName , q.order as QNumber, q.name as Question, a.name as Answer ORDER BY QNumber';
 		$theData = $this->neolib->QueryToArr($query, ['RespondentName' => $RespondentName,'LoQID' => $LoQID]);
+		dump($theData);
 		return new JsonResponse( $theData );
 	}
 	 
@@ -55,6 +56,7 @@ class QuestionController extends AbstractController
 		// if an AnswerID is given, store it.
 		if (!$AnswerID=="")
 		{
+			//SetAnswer
 			$query = 'MATCH (r:Respondent),(a:Answer) where r.in_id=$RespondentID and a.in_id=$AnswerID MERGE (r)-[:respondedWith]->(a)';
 			$this->neolib->QueryToArr($query, ['RespondentID' => $RespondentID,'AnswerID' => $AnswerID]);
 		}
@@ -62,11 +64,11 @@ class QuestionController extends AbstractController
 		$ViewData = $this->neolib->getView('View5ee536863ee7e7.13505371', false);
 		$query = $ViewData['view']['query'];
 		$theData = $this->neolib->QueryToArr($query, ['RespondentID' => $RespondentID,'LoQID' => $LoQID]);
-		dump($theData[0]);
+		//dump($theData);
 		$resultArray = array(
 			'RespondentID' => $RespondentID,
 			'LoQID' => $LoQID,
-			'Question' => $theData[0],
+			'Question' => $theData,
 			'theView' => $ViewData['view']);
 		
         return $this->render('view/templates/'.$ViewData['view']['templateName'], $resultArray)->getContent();		

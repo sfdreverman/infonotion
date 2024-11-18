@@ -9,7 +9,7 @@
 	<br>
 </div>
 {%else%}
-
+{% set Question = Question[0] %}
 <div class="panel-heading" id="title">
 	<span hidden id="AnswerID"></span>
 	<span class="h3 caption" id="ItemName">Question {{Question['Question']['order']}}:<br>{{Question['Question']['name']}}</span>
@@ -21,7 +21,7 @@
 		{% endfor %}
 	</div>
 	<br>
-	<label class="btn btn-primary" name="Submit" onclick="getNextQuestion('NextQuestion','{{RespondentID}}','{{LoQID}}')">Submit</label>
+	<label class="btn btn-primary" id="SubmitQ" name="Submit" onclick="getNextQuestion('NextQuestion','{{RespondentID}}','{{LoQID}}')">Submit</label>
 </div>
 {%endif%}
 
@@ -29,5 +29,6 @@
 		function setAnswer(answerID)
 		{
 			document.getElementById("AnswerID").innerHTML = answerID;
+			console.log(document.getElementById(answerID).innerHTML);
 		}
 	</script>
