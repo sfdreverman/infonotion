@@ -15,9 +15,7 @@ use Symfony\Component\Validator\Constraints\DateTime;
 class ViewController extends AbstractController
 {
 // List old Item & fetch current item
-	/**
-	 * @Route("/frameN/{frameName}/{domain}/{metaType}/{instanceID}", defaults={"instanceID" = "", "metaType" = "", "domain" = ""})
-	 */
+
 	#[Route('/frameN/{frameName}/{domain}/{metaType}/{instanceID}', name: 'frameN')]
 	public function loadframeByName($frameName, $domain="", $metaType="", $instanceID="")
 	{
@@ -26,10 +24,7 @@ class ViewController extends AbstractController
 	   return $this->getFrame($frame,$domain,$metaType,$instanceID);
 	}		 
 	
-   /**
-	* @Route("/frame/{frameID}/{domain}/{metaType}/{instanceID}")
-	*/
-	#[Route('/frame/{frameName}/{domain}/{metaType}/{instanceID}', name: 'frame')]
+	#[Route('/frame/{frameID}/{domain}/{metaType}/{instanceID}', name: 'frame')]
 	public function loadframe($frameID, $domain, $metaType, $instanceID)
 	{
 	   $frame = $neolib->getFrame($frameID);

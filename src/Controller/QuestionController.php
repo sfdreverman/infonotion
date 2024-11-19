@@ -22,8 +22,7 @@ class QuestionController extends AbstractController
     public function AnswerQuestions(Request $request, $instanceID)
     {
         // Redirect to the frame that answers the question
-		return $this->redirectToRoute('frameN', array('frameName' => 'Questionnaire', 'domain' => 'Questions', 'metaType'=>'ListOfQuestions'));	
-		//return $this->redirect('/frameN/Questionnaire/Questions/ListOfQuestions/'.$instanceID);
+		return $this->redirectToRoute('frameN', array('frameName' => 'Questionnaire', 'domain' => 'Questions', 'metaType'=>'ListOfQuestions', 'instanceID' => $instanceID));	
     }
 	
 	
